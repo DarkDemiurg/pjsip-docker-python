@@ -51,3 +51,5 @@ RUN mkdir /usr/src/pjsip && \
     make install && \
     /sbin/ldconfig && \
     rm -rf /usr/src/pjsip
+
+ENTRYPOINT ["/bin/bash", ]
