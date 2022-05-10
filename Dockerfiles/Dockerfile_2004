@@ -1,6 +1,6 @@
 # -*- Dockerfile -*-
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 LABEL org.opencontainers.image.authors="daefimov@gmail.com"
 LABEL version="0.1"
@@ -17,7 +17,7 @@ RUN apt-get update -qq && \
             libgsm1-dev \
             libspeex-dev \
             libspeexdsp-dev \
-            libsrtp0-dev \
+            libsrtp2-dev \
             libssl-dev \
             portaudio19-dev \
             wget \
@@ -31,25 +31,6 @@ RUN apt-get update -qq && \
             update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1 && \
             apt-get purge -y --auto-remove && rm -rf /var/lib/apt/lists/*
 
-COPY config_site.h /tmp/
+COPY config_site.h compile.sh /tmp/
 
-RUN mkdir /usr/src/pjsip && \
-    cd /usr/src/pjsip && \    
-    wget -c https://github.com/pjsip/pjproject/archive/refs/tags/${PJSIP_VERSION}.tar.gz  -O - | \
-    tar --strip-components 1 -xz && \
-    mv /tmp/config_site.h pjlib/include/pj/ && \
-    CFLAGS="-O2 -DNDEBUG" \
-    ./configure --enable-shared \
-                --disable-video \
-                --prefix=/pjsip \
-                && \
-    make dep -j$(nproc) && \
-    make -j$(nproc) && \
-    make install && \
-    cd pjsip-apps/src/swig && \
-    make && \
-    make install && \
-    /sbin/ldconfig && \
-    rm -rf /usr/src/pjsip
-
-ENTRYPOINT ["/bin/bash", ]
+RUN /tmp/compile.sh

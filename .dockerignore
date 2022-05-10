@@ -1,1 +1,7 @@
 .git
+.gitignore
+build/
+build.sh
+Dockerfiles/
+LICENSE
+README.dm

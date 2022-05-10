@@ -1,0 +1,43 @@
+# -*- Dockerfile -*-
+
+FROM ubuntu:22.04
+
+LABEL org.opencontainers.image.authors="daefimov@gmail.com"
+LABEL version="0.1"
+LABEL description="Container for build python 3 support for PJSIP."
+
+ENV PJSIP_VERSION=2.12
+
+RUN apt-get update -qq && apt-get upgrade -y \
+    && \
+    apt-get install -y --no-install-recommends \
+            software-properties-common \
+            gpg-agent \
+            && \
+    add-apt-repository ppa:deadsnakes/ppa -y && \
+    apt-get update -qq && \
+    DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y --no-install-recommends \
+            build-essential \
+            ca-certificates \
+            curl \
+            libgsm1-dev \
+            libspeex-dev \
+            libspeexdsp-dev \
+            libsrtp2-dev \
+            libssl-dev \
+            portaudio19-dev \
+            wget \
+            python3.8 \
+            python3.8-dev \
+            python3.8-distutils \
+            python3.8-venv \
+            swig \
+            default-jdk \
+            && \
+            update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1 && \
+            apt-get purge -y --auto-remove && rm -rf /var/lib/apt/lists/*
+
+COPY config_site.h compile.sh /tmp/
+
+RUN /tmp/compile.sh
